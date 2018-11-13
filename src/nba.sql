@@ -1,25 +1,13 @@
-/* Initialize tables and instances */
-
-drop table Coach;
-drop table Team;
-drop table Team_Stats;
-drop table Game;
-drop table Player;
-drop table Player_Stats;
-drop table Player_Contract;
-
-CREATE TABLE Coach
-(
+CREATE TABLE Coach(
   coachID INTEGER NOT NULL,
   name CHAR(50),
   experience INTEGER,
-  PRIMARY KEY (coachID),
+  PRIMARY KEY (coachID)
 );
 
 grant select on Coach to public;
 
-CREATE TABLE Team
-(
+CREATE TABLE Team(
   teamID CHAR(50) NOT NULL,
   coachID Integer NOT NULL,
   teamName CHAR(50),
@@ -32,8 +20,7 @@ CREATE TABLE Team
 
 grant select on Team to public;
 
-CREATE TABLE Team_Stats
-(
+CREATE TABLE Team_Stats(
   tsID INTEGER NOT NULL,
   win INTEGER,
   loss INTEGER,
@@ -49,8 +36,7 @@ CREATE TABLE Team_Stats
 
 grant select on Team_Stats to public;
 
-CREATE TABLE Game
-(
+CREATE TABLE Game(
   gameID INTEGER NOT NULL,
   homeTeamID CHAR(50),
   awayTeamID CHAR(50),
@@ -67,28 +53,22 @@ CREATE TABLE Game
 
 grant select on Game to public;
 
-CREATE TABLE Player
-(
+CREATE TABLE Player(
   playerID INTEGER NOT NULL,
   playerTeam CHAR(50),
-  pcID CHAR(50),
   firstName CHAR(50),
   lastName CHAR(50),
   position CHAR(50),
   age CHAR(50),
   PRIMARY KEY (playerID),
-  FOREIGN KEY (teamID) 
-    REFERENCES Team(playerTeam)
-    ON DELETE CASCADE,
-  FOREIGN KEY (pcID) 
-    REFERENCES Player_Contract(contractID)
+  FOREIGN KEY (playerTeam) 
+    REFERENCES Team(teamID)
     ON DELETE CASCADE
 );
 
 grant select on Player to public;
 
-CREATE TABLE Player_Stats
-(
+CREATE TABLE Player_Stats(
   sID INTEGER NOT NULL,
   player INTEGER NOT NULL,
   pts INTEGER,
@@ -102,8 +82,7 @@ CREATE TABLE Player_Stats
 
 grant select on Player_Stats to public;
 
-CREATE TABLE Player_Contract
-(
+CREATE TABLE Player_Contract(
   contractID INTEGER NOT NULL,
   pID INTEGER NOT NULL,
   tID CHAR(50) NOT NULL,
@@ -119,3 +98,5 @@ CREATE TABLE Player_Contract
 );
 
 grant select on Player_Contract to public;
+
+commit;
