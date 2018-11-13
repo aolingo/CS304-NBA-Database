@@ -4,7 +4,7 @@ drop table Coach;
 drop table Team;
 drop table Team_Stats;
 drop table Game;
-drop table Player CASCADE CONSTRAINTS;
+drop table Player;
 drop table Player_Stats;
 drop table Player_Contract;
 
@@ -35,16 +35,16 @@ grant select on Team to public;
 CREATE TABLE Team_Stats
 (
   tsID INTEGER NOT NULL,
-  wins INTEGER,
-  wosses INTEGER,
-  winLoss DECIMAL,
-  ppg DECIMAL,
-  papg DECIMAL,
+  win INTEGER,
+  loss INTEGER,
   teamID CHAR(50) NOT NULL,
   PRIMARY KEY (tsID, teamID),
   FOREIGN KEY (teamID) 
     REFERENCES Team(teamID)
-    ON DELETE CASCADE
+    ON DELETE CASCADE,
+  CHECK (win >= 0 And win <= 82),
+  CHECK (loss >= 0 And loss <= 82),
+  CHECK ((win + loss) <= 82)
 );
 
 grant select on Team_Stats to public;
@@ -52,12 +52,17 @@ grant select on Team_Stats to public;
 CREATE TABLE Game
 (
   gameID INTEGER NOT NULL,
-  homeTeam CHAR(50),
-  awayTeam CHAR(50),
+  homeTeamID CHAR(50),
+  awayTeamID CHAR(50),
   homeScore INTEGER,
   awayScore INTEGER,
-  CompanyName CHAR(30),
-  PRIMARY KEY (gameID)
+  PRIMARY KEY (gameID),
+  FOREIGN KEY (homeTeamID) 
+    REFERENCES Team(teamID)
+    ON DELETE CASCADE,
+  FOREIGN KEY (awayTeamID) 
+    REFERENCES Team(teamID)
+    ON DELETE CASCADE
 );
 
 grant select on Game to public;
@@ -65,13 +70,19 @@ grant select on Game to public;
 CREATE TABLE Player
 (
   playerID INTEGER NOT NULL,
-  name CHAR(50),
+  playerTeam CHAR(50),
+  pcID CHAR(50),
+  firstName CHAR(50),
+  lastName CHAR(50),
   position CHAR(50),
-  teamID CHAR(50),
+  age CHAR(50),
   PRIMARY KEY (playerID),
-  FOREIGN KEY (Team) 
-    REFERENCES Team(teamID)
+  FOREIGN KEY (teamID) 
+    REFERENCES Team(playerTeam)
     ON DELETE CASCADE,
+  FOREIGN KEY (pcID) 
+    REFERENCES Player_Contract(contractID)
+    ON DELETE CASCADE
 );
 
 grant select on Player to public;
@@ -79,19 +90,13 @@ grant select on Player to public;
 CREATE TABLE Player_Stats
 (
   sID INTEGER NOT NULL,
-  playerName CHAR(50),
+  player INTEGER NOT NULL,
   pts INTEGER,
   reb INTEGER,
   ast INTEGER,
-  blk INTEGER,
-  stl INTEGER,
-  playerID INTEGER NOT NULL,
   PRIMARY KEY (sID),
-  FOREIGN KEY (playerID)
+  FOREIGN KEY (player)
     REFERENCES Player(playerID)
-    ON DELETE CASCADE,
-  FOREIGN KEY (playerName)
-    REFERENCES Player(name)
     ON DELETE CASCADE
 );
 
@@ -100,17 +105,17 @@ grant select on Player_Stats to public;
 CREATE TABLE Player_Contract
 (
   contractID INTEGER NOT NULL,
-  length INTEGER,
-  totalAmount INTEGER,
-  playerID INTEGER NOT NULL,
-  teamID CHAR(50) NOT NULL,
-  PRIMARY KEY (contractID, playerID, teamID),
-  FOREIGN KEY (playerID)
+  pID INTEGER NOT NULL,
+  tID CHAR(50) NOT NULL,
+  yearlySal INTEGER,
+  contractLength INTEGER,
+  PRIMARY KEY (contractID, pID, tID),
+  FOREIGN KEY (pID)
     REFERENCES Player(playerID)
     ON DELETE CASCADE,
-  FOREIGN KEY (teamID)
+  FOREIGN KEY (tID)
     REFERENCES Team(teamID)
-    ON DELETE SET NULL
+    ON DELETE CASCADE
 );
 
 grant select on Player_Contract to public;
