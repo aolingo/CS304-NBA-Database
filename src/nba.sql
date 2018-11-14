@@ -55,13 +55,13 @@ CREATE TABLE Game(
 grant select on Game to public;
 
 CREATE TABLE Player(
-  playerID INTEGER NOT NULL,
+  playerID CHAR(50),
   playerTeam CHAR(50) NOT NULL,
   firstName CHAR(50),
   lastName CHAR(50),
   position CHAR(50),
   age INTEGER,
-  PRIMARY KEY (playerID, playerTeam),
+  PRIMARY KEY (playerID),
   FOREIGN KEY (playerTeam) 
     REFERENCES Team(teamID)
     ON DELETE CASCADE
@@ -70,18 +70,14 @@ CREATE TABLE Player(
 grant select on Player to public;
 
 CREATE TABLE Player_Stats(
-  sID CHAR(50),
-  pTeam CHAR (50) NOT NULL,
-  player INTEGER NOT NULL,
+  sID CHAR(50) NOT NULL,
+  player CHAR(50) NOT NULL,
   ppg DECIMAL,
   rpg DECIMAL,
   apg DECIMAL,
-  PRIMARY KEY (sID, player, pTeam),
+  PRIMARY KEY (sID, player),
   FOREIGN KEY (player)
     REFERENCES Player(playerID)
-    ON DELETE CASCADE,
-  FOREIGN KEY (pTeam)
-    REFERENCES Team(teamID)
     ON DELETE CASCADE
 );
 
@@ -90,7 +86,7 @@ grant select on Player_Stats to public;
 CREATE TABLE Player_Contract(
   contractID CHAR(30),
   tID CHAR(50) NOT NULL,
-  pID INTEGER NOT NULL,
+  pID CHAR(50) NOT NULL,
   yearlySal INTEGER,
   yearsLeft INTEGER,
   PRIMARY KEY (contractID, tID, pID),
