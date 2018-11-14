@@ -1,5 +1,6 @@
+-- Initialize all the tables for the db
 CREATE TABLE Coach(
-  coachID INTEGER NOT NULL,
+  coachID CHAR(30),
   name CHAR(50),
   experience INTEGER,
   PRIMARY KEY (coachID)
@@ -9,7 +10,7 @@ grant select on Coach to public;
 
 CREATE TABLE Team(
   teamID CHAR(50) NOT NULL,
-  coachID Integer NOT NULL,
+  coachID CHAR(30),
   teamName CHAR(50),
   location CHAR(50),
   PRIMARY KEY (teamID),
@@ -21,10 +22,10 @@ CREATE TABLE Team(
 grant select on Team to public;
 
 CREATE TABLE Team_Stats(
-  tsID INTEGER NOT NULL,
+  tsID CHAR(50) NOT NULL,
+  teamID CHAR(50) NOT NULL,
   win INTEGER,
   loss INTEGER,
-  teamID CHAR(50) NOT NULL,
   PRIMARY KEY (tsID, teamID),
   FOREIGN KEY (teamID) 
     REFERENCES Team(teamID)
@@ -55,12 +56,12 @@ grant select on Game to public;
 
 CREATE TABLE Player(
   playerID INTEGER NOT NULL,
-  playerTeam CHAR(50),
+  playerTeam CHAR(50) NOT NULL,
   firstName CHAR(50),
   lastName CHAR(50),
   position CHAR(50),
-  age CHAR(50),
-  PRIMARY KEY (playerID),
+  age INTEGER,
+  PRIMARY KEY (playerID, playerTeam),
   FOREIGN KEY (playerTeam) 
     REFERENCES Team(teamID)
     ON DELETE CASCADE
@@ -69,26 +70,30 @@ CREATE TABLE Player(
 grant select on Player to public;
 
 CREATE TABLE Player_Stats(
-  sID INTEGER NOT NULL,
+  sID CHAR(50),
+  pTeam CHAR (50) NOT NULL,
   player INTEGER NOT NULL,
-  pts INTEGER,
-  reb INTEGER,
-  ast INTEGER,
-  PRIMARY KEY (sID),
+  ppg DECIMAL,
+  rpg DECIMAL,
+  apg DECIMAL,
+  PRIMARY KEY (sID, player, pTeam),
   FOREIGN KEY (player)
     REFERENCES Player(playerID)
+    ON DELETE CASCADE,
+  FOREIGN KEY (pTeam)
+    REFERENCES Team(teamID)
     ON DELETE CASCADE
 );
 
 grant select on Player_Stats to public;
 
 CREATE TABLE Player_Contract(
-  contractID INTEGER NOT NULL,
-  pID INTEGER NOT NULL,
+  contractID CHAR(30),
   tID CHAR(50) NOT NULL,
+  pID INTEGER NOT NULL,
   yearlySal INTEGER,
-  contractLength INTEGER,
-  PRIMARY KEY (contractID, pID, tID),
+  yearsLeft INTEGER,
+  PRIMARY KEY (contractID, tID, pID),
   FOREIGN KEY (pID)
     REFERENCES Player(playerID)
     ON DELETE CASCADE,
