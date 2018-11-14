@@ -1,7 +1,7 @@
-<p>2017-2018 Regular Season NBA Database</p>
+<p>This page can only be accessed by NBA league employees</p>
 <form method="POST" action="oracle-test.php">
    
-<p><input type="submit" value="Show League Standings" name="displayStandings"></p>
+<p><input type="submit" value="Initialize Database" name="init"></p>
 </form>
 
 <p>Add a coach into the league database: </p>
