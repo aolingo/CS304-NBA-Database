@@ -1,7 +1,7 @@
 -- Initialize all the tables for the db
 CREATE TABLE Coach(
-  coachID CHAR(30),
-  name CHAR(50),
+  coachID CHAR(30) NOT NULL,
+  name CHAR(50) NOT NULL,
   experience INTEGER,
   PRIMARY KEY (coachID)
 );
@@ -10,9 +10,9 @@ grant select on Coach to public;
 
 CREATE TABLE Team(
   teamID CHAR(50) NOT NULL,
-  coachID CHAR(30),
-  teamName CHAR(50),
-  location CHAR(50),
+  coachID CHAR(30) NOT NULL,
+  teamName CHAR(50) NOT NULL,
+  location CHAR(50) NOT NULL,
   PRIMARY KEY (teamID),
   FOREIGN KEY (coachID)
     REFERENCES Coach(coachID)
@@ -24,8 +24,8 @@ grant select on Team to public;
 CREATE TABLE Team_Stats(
   tsID CHAR(50) NOT NULL,
   teamID CHAR(50) NOT NULL,
-  win INTEGER,
-  loss INTEGER,
+  win INTEGER NOT NULL,
+  loss INTEGER NOT NULL,
   PRIMARY KEY (tsID, teamID),
   FOREIGN KEY (teamID) 
     REFERENCES Team(teamID)
@@ -39,10 +39,10 @@ grant select on Team_Stats to public;
 
 CREATE TABLE Game(
   gameID INTEGER NOT NULL,
-  homeTeamID CHAR(50),
-  awayTeamID CHAR(50),
-  homeScore INTEGER,
-  awayScore INTEGER,
+  homeTeamID CHAR(50) NOT NULL,
+  awayTeamID CHAR(50) NOT NULL,
+  homeScore INTEGER NOT NULL,
+  awayScore INTEGER NOT NULL,
   PRIMARY KEY (gameID),
   FOREIGN KEY (homeTeamID) 
     REFERENCES Team(teamID)
@@ -55,12 +55,12 @@ CREATE TABLE Game(
 grant select on Game to public;
 
 CREATE TABLE Player(
-  playerID CHAR(50),
+  playerID CHAR(50) NOT NULL,
   playerTeam CHAR(50) NOT NULL,
-  firstName CHAR(50),
-  lastName CHAR(50),
+  firstName CHAR(50) NOT NULL,
+  lastName CHAR(50) NOT NULL,
   position CHAR(50),
-  age INTEGER,
+  age INTEGER NOT NULL,
   PRIMARY KEY (playerID),
   FOREIGN KEY (playerTeam) 
     REFERENCES Team(teamID)
@@ -84,7 +84,7 @@ CREATE TABLE Player_Stats(
 grant select on Player_Stats to public;
 
 CREATE TABLE Player_Contract(
-  contractID CHAR(30),
+  contractID CHAR(30) NOT NULL,
   tID CHAR(50) NOT NULL,
   pID CHAR(50) NOT NULL,
   yearlySal INTEGER,
