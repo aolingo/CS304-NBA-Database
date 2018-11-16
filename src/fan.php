@@ -1,16 +1,41 @@
-<p>Welcome to the NBA Database</p>
-<p>All stats and roster information are accurate as of the August, 2018</p>
+<!DOCTYPE html>
+<html>
+<style>
+ .header img {
+  float: left;
+  width: 40px;
+  height: 80px;
+  background: #555;
+}
 
+.header h1 {
+	position: relative;
+	top: -15px;
+  left: 20px;
+  font-family:Helvetica;
+}
+</style>
+
+<head>
+        <title>NBA Database for Fans</title>
+</head>
+
+<body>
+<div class="header">
+  <img src="https://theundefeated.com/wp-content/uploads/2017/05/nba-logo.png" alt="NBA logo" />
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <h1>NBA Database for Fans</h1>
+</div>
+<br>
 <form method="POST" action="fan.php">
-<!-- <a href="nba_login.php">NBA Employee Login Portal</a> -->
-
-<p><input type="submit" value="NBA Employee Login Portal" name="elogin"></p>
-
+<!-- Show all basic data from the database -->
 <p><input type="submit" value="Show League Standings" name="displayStandings"></p>
-
+<p><input type="submit" value="Show All Coaches" name="displayCoaches"></p>
+<p><input type="submit" value="Show All Players and Stats" name="displayPlayers"></p>
+<p><input type="submit" value="Show All Past Games" name="displayGames"></p>
 </form>
 
-
+<!-- Start of php file -->
 <?php
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
@@ -80,27 +105,55 @@ function executeBoundSQL($cmdstr, $list) {
 
 }
 
-function printResult($result) { //prints results from a select statement
-	echo "<br>Got data from table tab1:<br>";
+function printStandings($result) { //prints the league standings (all Teams and corresponding Team_Stats sorted by Win)
+	echo "<br>NBA Standings for the 2017-2018 Regular Season:<br>";
 	echo "<table>";
-	echo "<tr><th>ID</th><th>Name</th><th>Position</th></tr>";
+	echo "<tr><th>Location</th><th>Team Name</th><th>Win</th><th>Loss</th></tr>";
 
 	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
-		echo "<tr><td>" . $row["NID"] . "</td><td>" . $row["NAME"] . "</td><td>" . $row["POSITION"] . "</td></tr>"; //or just use "echo $row[0]" 
+		echo "<tr><td>" . $row[0] . "</td><td>" . $row[1] . "</td><td>" . $row[2] . "</td><td>" . $row[3] . "</td></tr>"; //or just use "echo $row[0]" 
 		
 	}
 	echo "</table>";
+}
 
+function printCoaches($result) { //prints all coaches in database
+	echo "<br>All coaches currently in the league: <br>";
+	echo "<table>";
+	echo "<tr><th>Name</th><th>Experience</th></tr>";
+
+	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
+		echo "<tr><td>" . $row[0] . "</td><td>" . $row[1] .  "</td></tr>"; //or just use "echo $row[0]" 
+		
+	}
+	echo "</table>";
+}
+
+function printPlayers($result) { //prints all players and their stats from a select statement
+	echo "<br>All players currently in the league: <br>";
+	echo "<table>";
+	echo "<tr><th>Age</th><th>First Name</th><th>Last Name</th><th>Position</th><th>Team</th><th>PPG</th><th>RPG</th><th>APG</th></tr>";
+
+	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
+		echo "<tr><td>" . $row[0] . "</td><td>" . $row[1] . "</td><td>" . $row[2] .  "</td><td>" . $row[3] . "</td><td>". $row[4] . "</td><td>". $row[5] . "</td><td>". $row[6] . "</td><td>". $row[7] . "</td></tr>"; //or just use "echo $row[0]" 
+	}
+	echo "</table>";
+}
+
+function printGames($result) { //prints all recorded games in the database
+	echo "<br>Retrieved all games from the databse: <br>";
+	echo "<table>";
+	echo "<tr><th>GameID</th><th>Home</th><th>Home Score</th><th>Away</th><th>Away Score</th></tr>";
+
+	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
+		echo "<tr><td>" . $row[0] . "</td><td>" . $row[1] . "</td><td>" . $row[2] .  "</td><td>" . $row[3] . "</td><td>". $row[4] . "</td></tr>"; //or just use "echo $row[0]" 
+	}
+	echo "</table>";
 }
 
 // Connect Oracle...
 if ($db_conn) {
-	if (array_key_exists('elogin', $_POST)) {
-		// Redirecting to employee login page
-		echo "Being redirected to the employee portal";
-		header("location: nba_login.php");
-	} 
-	else if (array_key_exists('insertsubmit', $_POST)) {
+if (array_key_exists('insertsubmit', $_POST)) {
 			//Getting the values from user and insert data into the table
 			$tuple = array (
 				":bind1" => $_POST['insNo'],
@@ -178,3 +231,5 @@ if ($db_conn) {
 	echo htmlentities($e['message']);
 }
 ?>
+</body>
+</html>

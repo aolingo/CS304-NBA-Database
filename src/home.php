@@ -25,9 +25,9 @@
   <br>
   <br>
   <br>
-  <button onclick="location.href='fan.php'" type="button">Fans Enter Here</button>
+  <button onclick="location.href='fan.php'" type="button">NBA Fans Enter Here</button>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <button onclick="location.href='nba_login.php'" type="button">NBA League Employees Login Here</button>
+  <button onclick="location.href='nba_employees.php'" type="button">NBA League Employees Enter Here</button>
 </body>
 </html>
