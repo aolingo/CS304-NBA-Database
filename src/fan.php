@@ -1,64 +1,17 @@
-<p>2017-2018 Regular Season NBA Database</p>
-<form method="POST" action="oracle-test.php">
-   
+<p>Welcome to the NBA Database</p>
+<p>All stats and roster information are accurate as of the August, 2018</p>
+
+<form method="POST" action="fan.php">
+<!-- <a href="nba_login.php">NBA Employee Login Portal</a> -->
+
+<p><input type="submit" value="NBA Employee Login Portal" name="elogin"></p>
+
 <p><input type="submit" value="Show League Standings" name="displayStandings"></p>
+
 </form>
 
-<p>Add a coach into the league database: </p>
-<p><font size="2"> Coach ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
-Coach Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Years of Experience</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
-
-   <p><input type="text" name="insCoachID" size="6"><input type="text" name="insCoachName" 
-size="14"><input type="text" name="insExp" size="10">
-<!--define three variables to pass the value-->
-      
-<input type="submit" value="insertc" name="addcoach"></p>
-</form>
-<!-- create a form to pass the values. See below for how to 
-get the values-->
-
-<p>Add a player into the league database: </p>
-<p><font size="2"> Coach ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
-Coach Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Years of Experience</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
-
-   <p><input type="text" name="insCoachID" size="6"><input type="text" name="insCoachName" 
-size="14"><input type="text" name="insExp" size="10">
-<!--define three variables to pass the value-->
-      
-<input type="submit" value="insertc" name="addcoach"></p>
-</form>
-
-<p> Update the name by inserting the old and new values below: </p>
-<p><font size="2"> Old Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
-New Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Old Position&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;New Position</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
-
-   <p><input type="text" name="oldName" size="14"><input type="text" name="newName" 
-size="14"><input type="text" name="oldPosition" size="12"><input type="text" name="newPosition" size="12">
-<!--define two variables to pass the value-->
-      
-<input type="submit" value="update" name="updatesubmit"></p>
-<p> Delete a data entry by inserting its Number/ID</p>
-<p><font size ="2">Number</font></p>
-<form method="POST" action="oracle-test.php">
-<!--refresh page when submit-->
-
-   <p><input type="text" name="deleteID" size="6">
-<!--define the variable to pass the value-->
-      
-<input type="submit" value="delete" name="deletesubmit"></p>
-<input type="submit" value="run hardcoded queries" name="dostuff"></p>
-</form>
 
 <?php
-
-//this tells the system that it's no longer just parsing 
-//html; it's now parsing PHP
 
 $success = True; //keep track of errors so it redirects the page only if there are no errors
 $db_conn = OCILogon("ora_v4w9a", "a14702147", "dbhost.ugrad.cs.ubc.ca:1522/ug");
@@ -142,18 +95,12 @@ function printResult($result) { //prints results from a select statement
 
 // Connect Oracle...
 if ($db_conn) {
-
-	if (array_key_exists('reset', $_POST)) {
-		// Drop old table...
-		echo "<br> dropping table <br>";
-		executePlainSQL("Drop table tab1");
-
-		// Create new table...
-		echo "<br> creating new table <br>";
-		executePlainSQL("create table tab1 (nid number, name varchar2(30), position varchar2(30), primary key (nid))");
-		OCICommit($db_conn);
-
-	} else if (array_key_exists('insertsubmit', $_POST)) {
+	if (array_key_exists('elogin', $_POST)) {
+		// Redirecting to employee login page
+		echo "Being redirected to the employee portal";
+		header("location: nba_login.php");
+	} 
+	else if (array_key_exists('insertsubmit', $_POST)) {
 			//Getting the values from user and insert data into the table
 			$tuple = array (
 				":bind1" => $_POST['insNo'],
@@ -216,11 +163,8 @@ if ($db_conn) {
 						//executePlainSQL("delete from tab1 where nid=1");
 						OCICommit($db_conn);
 					} 
-				
-	if ($_POST && $success) {
-		//POST-REDIRECT-GET -- See http://en.wikipedia.org/wiki/Post/Redirect/Get
-		header("location: oracle-test.php");
-	} else {
+
+				 else {
 		// Select data...
 		$result = executePlainSQL("select * from tab1");
 		printResult($result);
@@ -233,37 +177,4 @@ if ($db_conn) {
 	$e = OCI_Error(); // For OCILogon errors pass no handle
 	echo htmlentities($e['message']);
 }
-
-/* OCILogon() allows you to log onto the Oracle database
-     The three arguments are the username, password, and database.
-     You will need to replace "username" and "password" for this to
-     to work. 
-     all strings that start with "$" are variables; they are created
-     implicitly by appearing on the left hand side of an assignment 
-     statement */
-/* OCIParse() Prepares Oracle statement for execution
-      The two arguments are the connection and SQL query. */
-/* OCIExecute() executes a previously parsed statement
-      The two arguments are the statement which is a valid OCI
-      statement identifier, and the mode. 
-      default mode is OCI_COMMIT_ON_SUCCESS. Statement is
-      automatically committed after OCIExecute() call when using this
-      mode.
-      Here we use OCI_DEFAULT. Statement is not committed
-      automatically when using this mode. */
-/* OCI_Fetch_Array() Returns the next row from the result data as an  
-     associative or numeric array, or both.
-     The two arguments are a valid OCI statement identifier, and an 
-     optinal second parameter which can be any combination of the 
-     following constants:
-
-     OCI_BOTH - return an array with both associative and numeric 
-     indices (the same as OCI_ASSOC + OCI_NUM). This is the default 
-     behavior.  
-     OCI_ASSOC - return an associative array (as OCI_Fetch_Assoc() 
-     works).  
-     OCI_NUM - return a numeric array, (as OCI_Fetch_Row() works).  
-     OCI_RETURN_NULLS - create empty elements for the NULL fields.  
-     OCI_RETURN_LOBS - return the value of a LOB of the descriptor.  
-     Default mode is OCI_BOTH.  */
 ?>
