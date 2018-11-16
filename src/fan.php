@@ -29,10 +29,15 @@
 <br>
 <form method="POST" action="fan.php">
 <!-- Show all basic data from the database -->
-<p><input type="submit" value="Show League Standings" name="displayStandings"></p>
-<p><input type="submit" value="Show All Coaches" name="displayCoaches"></p>
-<p><input type="submit" value="Show All Players and Stats" name="displayPlayers"></p>
-<p><input type="submit" value="Show All Past Games" name="displayGames"></p>
+<p>
+<input type="submit" value="Show League Standings" name="displayStandings">
+&nbsp;&nbsp;&nbsp;
+<input type="submit" value="Show All Coaches" name="displayCoaches">
+&nbsp;&nbsp;&nbsp;
+<input type="submit" value="Show All Players and Stats" name="displayPlayers">
+&nbsp;&nbsp;&nbsp;
+<input type="submit" value="Show All Past Games" name="displayGames">
+</p> 
 </form>
 
 <!-- Start of php file -->
@@ -220,7 +225,7 @@ if (array_key_exists('insertsubmit', $_POST)) {
 				 else {
 		// Select data...
 		$result = executePlainSQL("select * from tab1");
-		printResult($result);
+		// printResult($result);
 	}
 
 	//Commit to save changes...
