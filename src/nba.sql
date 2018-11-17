@@ -10,7 +10,7 @@ grant select on Coach to public;
 
 CREATE TABLE Team(
   teamID CHAR(50) NOT NULL,
-  coachID CHAR(30) NOT NULL,
+  coachID CHAR(30),
   teamName CHAR(50) NOT NULL,
   location CHAR(50) NOT NULL,
   PRIMARY KEY (teamID),
@@ -72,9 +72,9 @@ grant select on Player to public;
 CREATE TABLE Player_Stats(
   sID CHAR(50) NOT NULL,
   player CHAR(50) NOT NULL,
-  ppg DECIMAL,
-  rpg DECIMAL,
-  apg DECIMAL,
+  ppg DECIMAL(9,1),
+  rpg DECIMAL(9,1),
+  apg DECIMAL(9,1),
   PRIMARY KEY (sID, player),
   FOREIGN KEY (player)
     REFERENCES Player(playerID)
