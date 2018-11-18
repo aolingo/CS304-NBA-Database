@@ -32,6 +32,7 @@
 <input type="submit" value="Initialize Database" name="init">
 <br>
 <br>
+<label><p>Display Database:</p></label>
 <p>
 <input type="submit" value="Show League Standings" name="displayStandings">
 &nbsp;&nbsp;&nbsp;
@@ -40,7 +41,9 @@
 <input type="submit" value="Show All Players and Stats" name="displayPlayers">
 &nbsp;&nbsp;&nbsp;
 <input type="submit" value="Show All Past Games" name="displayGames">
-</p> 
+</p>
+<label><p>Search the Database:</p></label>
+<input type="submit" value="Search Database" name="search"> 
 </form>
 
 <!-- Start of php file -->
@@ -387,7 +390,9 @@ if ($db_conn) {
 					$result = executePlainSQL("select age, firstName, lastName, position, playerTeam, ppg, rpg, apg from
 					player p, player_stats ps where p.playerID = ps.player order by lastName ASC");
 					printPlayers($result);
-					} 
+					} else if (array_key_exists('search', $_POST)){
+							header("location:search.php");
+					}
 
 	//Commit to save changes...
 	OCILogoff($db_conn);

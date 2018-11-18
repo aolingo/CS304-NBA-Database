@@ -28,6 +28,6 @@
   <button onclick="location.href='fan.php'" type="button">NBA Fans Enter Here</button>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <button onclick="location.href='nba_employees.php'" type="button">NBA League Employees Enter Here</button>
+  <button onclick="location.href='manager-view.php'" type="button">NBA League Employees Enter Here</button>
 </body>
 </html>
