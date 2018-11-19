@@ -231,8 +231,7 @@ if ($db_conn) {
 		ps.ppg, ps.rpg, ps.apg, 
 		t.location, t.teamName, ts.win, ts.loss
 		FROM Player p, Team t, Player_Stats ps, Team_Stats ts
-		WHERE p.playerTeam = t.teamID AND p.playerID = ps.player AND t.teamID = ts.teamID
-		ORDER BY ".$sort." DESC";
+		WHERE p.playerTeam = t.teamID AND p.playerID = ps.player AND t.teamID = ts.teamID";
 
 		if($coach != "") {
 			$searchCoach = "SELECT c.name, c.experience, p.firstName, p.lastName, p.position, p.age,
@@ -309,7 +308,9 @@ if ($db_conn) {
 		if ($maxAPG != "") {
 			$search .= " AND ps.apg < " . $maxAPG;
 		}
-		
+
+		$search .= "ORDER BY ".$sort." DESC";
+
 		$result = executePlainSQL($search);
 		printSearch($result);
 		}
