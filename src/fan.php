@@ -27,6 +27,9 @@
   <h1>NBA Database for Fans</h1>
 </div>
 <br>
+<button onclick="location.href='home.php'" type="button">Home Page</button>
+<br>
+<br>
 <form method="POST" action="fan.php">
 <!-- Show all basic data from the database -->
 <input type="submit" value="Initialize Database" name="init">
