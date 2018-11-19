@@ -268,6 +268,10 @@ if ($db_conn) {
 		if ($position != "") {
 			$search .= " AND p.position LIKE '" . $position . "%'";
 		}
+
+		if ($age != "") {
+			$search .= " AND p.age = " . $age;
+		}
 		
 		if ($minWin != "") {
 			$search .= " AND ts.win > " . $minWin;
@@ -309,7 +313,7 @@ if ($db_conn) {
 			$search .= " AND ps.apg < " . $maxAPG;
 		}
 
-		$search .= "ORDER BY ".$sort." DESC";
+		$search .= " ORDER BY ".$sort." DESC";
 
 		$result = executePlainSQL($search);
 		printSearch($result);
