@@ -25,9 +25,12 @@
   <h1>Search NBA Database</h1>
 </div>
 <br>
-<button onclick="location.href='fan.php'" type="button">Back to Portal</button>
-<br>
-<form method="POST" action="search.php">
+
+<form method="POST" action="manager-view.php">
+<p><input type="submit" value="Return to employee database" name="managerview"></p>
+</form>
+
+<form method="POST" action="manager-search.php">
 
 <label><p><b>Search by Coach Name:</b></p></label>
 <input type="text" name="coachSearch"><br>
@@ -74,10 +77,17 @@
 <p><tr><th>Min APG</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<th>Max APG</th></tr></p>
 <input type="text" name="minAPG">
 <input type="text" name="maxAPG"><br>
+
+
+<label><p><b>Search by Salary:</b></p></label>
+<p><tr><th>Min Salary</th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<th>Max Salary</th></tr></p>
+<input type="text" name="minSalary">
+<input type="text" name="maxSalary"><br>
+
 <br>
 
 <!-- Sorting Options -->
-<?php 
+<?php
 	$sort2 = 't.teamName';
 ?>
 Sort (Descending by default):
@@ -95,6 +105,8 @@ Sort (Descending by default):
 	Win
 	<input type="radio" name="sort" <?php if (isset($sort2) && $sort2 == 'ts.loss') echo "checked";?> value = "ts.loss">
 	Loss
+	<input type="radio" name="sort" <?php if (isset($sort2) && $sort2 == 'pc.yearlySal') echo "checked";?> value = "pc.yearlySal">
+	Salary
 <br>
 <br>
 
@@ -113,7 +125,7 @@ function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL com
 
 	if (!$statement) {
 		echo "<br>Cannot parse the following command: " . $cmdstr . "<br>";
-		$e = OCI_Error($db_conn); // For OCIParse errors pass the       
+		$e = OCI_Error($db_conn); // For OCIParse errors pass the
 		// connection handle
 		echo htmlentities($e['message']);
 		$success = False;
@@ -135,9 +147,9 @@ function executePlainSQL($cmdstr) { //takes a plain (no bound variables) SQL com
 function executeBoundSQL($cmdstr, $list) {
 	/* Sometimes the same statement will be executed for several times ... only
 	 the value of variables need to be changed.
-	 In this case, you don't need to create the statement several times; 
+	 In this case, you don't need to create the statement several times;
 	 using bind variables can make the statement be shared and just parsed once.
-	 This is also very useful in protecting against SQL injection.  
+	 This is also very useful in protecting against SQL injection.
       See the sample code below for how this functions is used */
 
 	global $db_conn, $success;
@@ -173,12 +185,12 @@ function executeBoundSQL($cmdstr, $list) {
 function printSearch($result) { //prints results from a select statement
 	echo "Showing all results from the database:<br><br>";
 	echo "<table border=2 cellpadding=5px cellspacing=5px style=font-family:Arial; font-size:7px>";
-	echo "<tr><th>Player First Name</th><th>Player Last Name</th><th>Position</th><th>Age</th><th>Points Per Game</th><th>Rebounds Per Game</th><th>Assists Per Game</th><th>City</th><th>Team</th><th>Win</th><th>Loss</th></tr>";
+	echo "<tr><th>Player First Name</th><th>Player Last Name</th><th>Position</th><th>Age</th><th>Points Per Game</th><th>Rebounds Per Game</th><th>Assists Per Game</th><th>City</th><th>Team</th><th>Win</th><th>Loss</th><th>Yearly Salary</th><th>Years Left</th></tr>";
 
 	while ($row = OCI_Fetch_Array($result, OCI_BOTH)) {
 		echo "<tr><td align=center>" . $row[0] . "</td><td align=center>" . $row[1] . "</td><td align=center>" . $row[2] . "</td><td align=center>"
 		. $row[3] . "</td><td align=center>" . $row[4] . "</td><td align=center>" . $row[5] . "</td><td align=center>" . $row[6] . "</td><td align=center>"
-		. $row[7] . "</td><td align=center>" . $row[8] . "</td><td align=center>" . $row[9] . "</td><td align=center>" . $row[10] . "</td></tr>";
+		. $row[7] . "</td><td align=center>" . $row[8] . "</td><td align=center>" . $row[9] . "</td><td align=center>" . $row[10] . "</td><td align=center>" . $row[11] . "</td><td align=center>" . $row[12] . "</td></tr>";
 	}
 	echo "</table>";
 
@@ -203,40 +215,45 @@ if ($db_conn) {
 
 	if (array_key_exists('searchDB', $_POST)) {
 		$coach = $_POST['coachSearch'];
-		
+
 		$player_fn = $_POST['FNPlayerSearch'];
 		$player_ln = $_POST['LNPlayerSearch'];
 		$position = $_POST['position'];
 		$age = $_POST['age'];
-		
+
 		$teamName = $_POST['teamSearch'];
 		$location = $_POST['location'];
-		
+
 		$minWin = $_POST['minWin'];
 		$maxWin = $_POST['maxWin'];
 		$minLoss = $_POST['minLoss'];
 		$maxLoss = $_POST['maxLoss'];
-		
+
 		$minPPG = $_POST['minPPG'];
 		$maxPPG = $_POST['maxPPG'];
-		
+
 		$minRPG = $_POST['minRPG'];
 		$maxRPG = $_POST['maxRPG'];
-		
+
 		$minAPG = $_POST['minAPG'];
 		$maxAPG = $_POST['maxAPG'];
+
+		$minSalary = $_POST['minSalary'];
+		$maxSalary = $_POST['maxSalary'];
+
+
 
 		$sort = $_POST['sort'];
 
 		$search = "SELECT p.firstName, p.lastName, p.position, p.age,
-		ps.ppg, ps.rpg, ps.apg, 
-		t.location, t.teamName, ts.win, ts.loss
-		FROM Player p, Team t, Player_Stats ps, Team_Stats ts
-		WHERE p.playerTeam = t.teamID AND p.playerID = ps.player AND t.teamID = ts.teamID";
+		ps.ppg, ps.rpg, ps.apg,
+		t.location, t.teamName, ts.win, ts.loss, pc.yearlySal, pc.yearsLeft
+		FROM Player p, Team t, Player_Stats ps, Player_Contract pc, Team_Stats ts
+		WHERE p.playerTeam = t.teamID AND p.playerID = ps.player AND t.teamID = ts.teamID AND p.playerID = pc.pID";
 
 		if($coach != "") {
 			$searchCoach = "SELECT c.name, c.experience, p.firstName, p.lastName, p.position, p.age,
-			ps.ppg, ps.rpg, ps.apg, 
+			ps.ppg, ps.rpg, ps.apg,
 			t.location, t.teamName, ts.win, ts.loss
 			FROM Player p
 			Join Team t on p.playerTeam = t.teamID
@@ -249,7 +266,7 @@ if ($db_conn) {
 			$result = executePlainSQL($searchCoach);
 			printSearchCoach($result);
 		} else {
-		
+
 		if ($player_fn != "") {
 			$search .= " AND p.firstName LIKE '" . $player_fn . "%'";
 		}
@@ -257,64 +274,70 @@ if ($db_conn) {
 		if ($player_ln != "") {
 			$search .= " AND p.lastName LIKE '" . $player_ln . "%'";
 		}
-		
+
 		if ($teamName != "") {
 			$search .= " AND t.teamName LIKE '" . $teamName . "%'";
 		}
-		
+
 		if ($location != "") {
 			$search .= " AND t.location LIKE '" . $location . "%'";
 		}
-		
+
 		if ($position != "") {
 			$search .= " AND p.position LIKE '" . $position . "%'";
 		}
 
-		if ($age != "") {
-			$search .= " AND p.age = " . $age;
+		if ($minSalary != "") {
+			$search .= " AND pc.yearlySal > " . $minSalary;
 		}
-		
+
+		if ($maxSalary != "") {
+			$search .= " AND pc.yearlySal < " . $maxSalary;
+		}
+
 		if ($minWin != "") {
 			$search .= " AND ts.win > " . $minWin;
 		}
-		
+
 		if ($maxWin != "") {
 			$search .= " AND ts.win < " . $maxWin;
 		}
-		
+
 		if ($minLoss != "") {
 			$search .= " AND ts.loss > " . $minLoss;
 		}
-		
+
 		if ($maxLoss != "") {
 			$search .= " AND ts.loss < " . $maxLoss;
 		}
-		
+
 		if ($minPPG != "") {
 			$search .= " AND ps.ppg > " . $minPPG;
 		}
-		
+
 		if ($maxPPG != "") {
 			$search .= " AND ps.ppg < " . $maxPPG;
 		}
-		
+
 		if ($minRPG != "") {
 			$search .= " AND ps.rpg > " . $minRPG;
 		}
-		
+
 		if ($maxRPG != "") {
 			$search .= " AND ps.rpg < " . $maxRPG;
 		}
-		
+
 		if ($minAPG != "") {
 			$search .= " AND ps.apg > " . $minAPG;
 		}
-		
+
 		if ($maxAPG != "") {
 			$search .= " AND ps.apg < " . $maxAPG;
 		}
 
+
 		$search .= " ORDER BY ".$sort." DESC";
+
 
 		$result = executePlainSQL($search);
 		printSearch($result);
@@ -322,4 +345,3 @@ if ($db_conn) {
 	}
 }
 ?>
-
